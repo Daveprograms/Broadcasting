@@ -1,4 +1,4 @@
-// This is your Prisma schema file
+// This is your Prisma schema file configured for PostgreSQL (Neon)
 
 generator client {
   provider = "prisma-client-js"
@@ -9,48 +9,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ─── Enums ────────────────────────────────────────────────────
-
-enum Role {
-  USER
-  ADMIN
-}
-
-enum TicketStatus {
-  PENDING
-  RESOLVED
-}
-
 // ─── Models ───────────────────────────────────────────────────
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String   // bcrypt hashed
-  name      String?
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  tickets SupportTicket[]
+  id            String                @id @default(cuid())
+  email         String                @unique
+  password      String                // bcrypt hashed
+  name          String?
+  role          String                @default("USER") // "USER" or "ADMIN"
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  tickets       SupportTicket[]
+  verifications PaymentVerification[]
 }
 
 /// Singleton row (id = 1) — stores the two e-transfer email addresses
 model Settings {
-  id     Int    @id @default(1)
-  email1 String @default("")
-  email2 String @default("")
+  id         Int    @id @default(1)
+  email1     String @default("")
+  email1Name String @default("")
+  email2     String @default("")
+  email2Name String @default("")
 
   updatedAt DateTime @updatedAt
 }
 
 model SupportTicket {
-  id          String       @id @default(cuid())
+  id          String   @id @default(cuid())
   userId      String
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   issueType   String
-  description String       @db.Text
-  status      TicketStatus @default(PENDING)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  description String
+  status      String   @default("PENDING") // "PENDING" or "RESOLVED"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PaymentVerification {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  senderName  String
+  amount      Float
+  phoneNumber String
+  notes       String?
+  screenshot  String   // Store Base64 data URI of the image
+  status      String   @default("PENDING") // "PENDING", "VERIFIED", "REJECTED"
+  adminNote   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

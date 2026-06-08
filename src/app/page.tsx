@@ -1,65 +1,81 @@
-import Image from "next/image";
+import Link from "next/link";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+
+  // If user is already authenticated, send them to the dashboard immediately
+  if (session) {
+    redirect("/dashboard");
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex-1 flex flex-col justify-center items-center px-6 py-16 relative">
+      {/* Decorative Glow Dots */}
+      <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-cyber-cyan/10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-cyber-magenta/10 rounded-full blur-[100px] pointer-events-none" />
+
+      <div className="max-w-4xl w-full text-center space-y-8 relative z-10">
+        {/* Futuristic Badge */}
+        <div className="inline-flex items-center space-x-2 bg-cyber-cyan/10 border border-cyber-cyan/30 rounded-full px-4 py-1.5 text-xs font-mono tracking-widest text-cyber-cyan uppercase animate-pulse">
+          <span>● SYSTEM ONLINE</span>
+          <span className="text-slate-500">|</span>
+          <span>V2.6 NODE</span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        {/* Main Hero Header */}
+        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight font-sans">
+          Welcome to the{" "}
+          <span className="block mt-2 bg-gradient-to-r from-cyber-cyan via-cyber-violet to-cyber-magenta bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(0,240,255,0.4)]">
+            Broadcasting Network
+          </span>
+        </h1>
+
+        <p className="max-w-2xl mx-auto text-base md:text-lg text-slate-400 font-mono leading-relaxed">
+          The next-generation distributed payment settlement channel. Securely
+          receive and process e-transfers with cryptographic verification and
+          instant notifications.
+        </p>
+
+        {/* Actions buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
+          <Link
+            href="/signup"
+            className="w-full sm:w-auto px-8 py-4 rounded-xl text-center font-mono font-bold tracking-wider bg-gradient-to-r from-cyber-cyan to-cyber-violet text-slate-900 hover:shadow-[0_0_25px_rgba(0,240,255,0.5)] transition duration-300 transform hover:-translate-y-0.5"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            CREATE ACCOUNT [SIGNUP]
+          </Link>
+          <Link
+            href="/login"
+            className="w-full sm:w-auto px-8 py-4 rounded-xl text-center font-mono font-bold tracking-wider border border-slate-700 bg-slate-900/50 text-slate-200 hover:border-cyber-cyan/50 hover:bg-slate-800/60 transition duration-300"
           >
-            Documentation
-          </a>
+            ACCESS TERMINAL [LOGIN]
+          </Link>
         </div>
-      </main>
+
+        {/* Features Specs Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-16">
+          <div className="glass-panel p-6 rounded-2xl border-slate-800 text-left">
+            <div className="text-cyber-cyan font-mono font-bold text-lg mb-2">⚡ 01. INSTANT ROUTING</div>
+            <p className="text-xs font-mono text-slate-400 leading-relaxed">
+              Payments are immediately checked and updated across our system. Zero latency between transmission and display.
+            </p>
+          </div>
+          <div className="glass-panel p-6 rounded-2xl border-slate-800 text-left">
+            <div className="text-cyber-magenta font-mono font-bold text-lg mb-2">🛡️ 02. CYBER SECURE</div>
+            <p className="text-xs font-mono text-slate-400 leading-relaxed">
+              Fully isolated accounts, custom encrypted endpoints, and robust database constraints keeping your assets safe.
+            </p>
+          </div>
+          <div className="glass-panel p-6 rounded-2xl border-slate-800 text-left">
+            <div className="text-cyber-green font-mono font-bold text-lg mb-2">🌐 03. GLOBAL ACCESS</div>
+            <p className="text-xs font-mono text-slate-400 leading-relaxed">
+              A simplified, lightweight user interface optimized for all viewport widths, devices, and internet speeds.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
